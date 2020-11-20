@@ -5,17 +5,45 @@
  */
 package calculorentavehiculos;
 
+import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 /**
  *
  * @author Nizar4790k
  */
+
+@Entity
+@Table(name="Carro")
 public class Carro {
 
+    @Id
+    @Column(name="idCarro")
     private int idCarro;
+    
+    @Column(name="modelo")
     private String modelo;
+    
+    @Column(name="placa")
     private String placa;
+  
+    @Column(name="color")
     private String color;
+    
+    @Column(name="marca")
     private String marca;
+    
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name="idCarro")          //User can have many contacts
+    private Set<Relacion> relacion;
+    
+    /**
     
     /**
      * @return the idCarro
