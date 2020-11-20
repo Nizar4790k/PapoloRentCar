@@ -1,4 +1,5 @@
 -- MySQL Workbench Forward Engineering
+DROP DATABASE  alquilerdecarro;
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
@@ -42,7 +43,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `AlquilerDeCarro`.`Alquiler_has_Carro`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `AlquilerDeCarro`.`Alquiler_has_Carro` (
+CREATE TABLE IF NOT EXISTS `AlquilerDeCarro`.`Relacion` (
   `Alquiler_idAlquiler` INT NOT NULL,
   `Carro_idCarro` INT NOT NULL,
   PRIMARY KEY (`Alquiler_idAlquiler`, `Carro_idCarro`),
@@ -77,8 +78,8 @@ INSERT INTO `Carro` (`marca`,`modelo`,`color`,`preciopordia`) VALUES ('Hyundai',
 
 
 
-INSERT INTO `Alquiler_has_Carro` (`Alquiler_idAlquiler`,`Carro_idCarro`) VALUES (1,1);
-INSERT INTO `Alquiler_has_Carro` (`Alquiler_idAlquiler`,`Carro_idCarro`) VALUES (2,1);
+INSERT INTO `Relacion` (`Alquiler_idAlquiler`,`Carro_idCarro`) VALUES (1,1);
+INSERT INTO `Relacion` (`Alquiler_idAlquiler`,`Carro_idCarro`) VALUES (2,1);
 
 
 
