@@ -87,6 +87,9 @@ public class Carro {
         this.marca = marca;
     }
     
- 
+    @Override
+    public String toString(){
+        return this.marca+" "+this.modelo;
+    }
     
 }
