@@ -5,17 +5,23 @@
  */
 package calculorentavehiculos;
 
+import java.util.List;
+
 /**
  *
  * @author Nizar4790k
  */
 public class DanielPatricio extends javax.swing.JFrame {
 
+    
+    
+    
     /**
      * Creates new form DanielPatricio
      */
     public DanielPatricio() {
         initComponents();
+       
     }
 
     /**

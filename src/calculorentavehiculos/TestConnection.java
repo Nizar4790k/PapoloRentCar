@@ -8,6 +8,9 @@ package calculorentavehiculos;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -16,24 +19,21 @@ import java.sql.SQLException;
 public class TestConnection {
     
     public static void main(String[] args){
-        getConnection("root","root12","alquilerdecarro");
+        
+        try {
+            List<Alquiler> alquileres = ManipulaDB.consultarObjeto(Alquiler.class);
+            for(Alquiler alquiler : alquileres){
+                System.out.println(alquiler.getIdAlquiler() +"   "+alquiler.getFecha());
+            }
+            
+           
+        } catch (SQLException ex) {
+            Logger.getLogger(TestConnection.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      
     }
 
-public static Connection getConnection(String user,String password,String db) {   // Probando la conexion a la DB
-	
-		System.out.println("Testing Connection");
-		
-		try {
-			Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+db+"?useSSL=false&zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=UTC", user, password);
-			System.out.println("Connection Successfull");
-			return connection;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
-		return null;
-	}
+
 
 
 }

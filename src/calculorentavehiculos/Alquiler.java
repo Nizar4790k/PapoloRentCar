@@ -5,18 +5,44 @@
  */
 package calculorentavehiculos;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  *
  * @author Nizar4790k
  */
-public class Alquiler {
 
+
+@Entity
+@Table(name="alquiler")
+public class Alquiler implements Serializable {
+
+    @Id
+    @Column(name="idAlquiler")
     private int idAlquiler;
+
+    @Column(name="nombre")
     private String nombre;
+    
+     @Column(name="fecha")
     private Date fecha;
+      
+    @Column(name="duracion")
     private int duracion;
+    
     
     /**
      * @return the idAlquiler

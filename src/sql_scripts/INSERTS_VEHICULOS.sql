@@ -1,6 +1,6 @@
 /*
 -- Query: 
--- Date: 2020-11-20 16:27
+-- Date: 2020-11-27 16:52
 */
 INSERT INTO `Carro` (`idCarro`,`marca`,`modelo`,`color`,`preciopordia`) VALUES (NULL,'Mazda','Demio','blanco',1500);
 INSERT INTO `Carro` (`idCarro`,`marca`,`modelo`,`color`,`preciopordia`) VALUES (NULL,'Hyundai ','Sonata','naranja',1000);

@@ -5,12 +5,16 @@
  */
 package calculorentavehiculos;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -20,8 +24,8 @@ import javax.persistence.Table;
  */
 
 @Entity
-@Table(name="Carro")
-public class Carro {
+@Table(name="carro")
+public class Carro implements Serializable {
 
     @Id
     @Column(name="idCarro")
@@ -29,19 +33,25 @@ public class Carro {
     
     @Column(name="modelo")
     private String modelo;
-    
-    @Column(name="placa")
-    private String placa;
-  
+   
     @Column(name="color")
     private String color;
     
     @Column(name="marca")
     private String marca;
     
+    @Column(name="preciopordia")
+    private int precioPorDia;
+    
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name="idCarro")          //User can have many contacts
-    private Set<Relacion> relacion;
+    @JoinColumn(name="idCarro")          //Carros pueden estar en varios alquileres
+    private Set<Alquiler> alquileres;
+    
+    /*
+    
+   @ManyToMany(mappedBy = "carros")
+    private Set<Alquiler> alquiler = new HashSet<>();
+    */
     
     /**
     
@@ -73,20 +83,7 @@ public class Carro {
         this.modelo = modelo;
     }
 
-    /**
-     * @return the placa
-     */
-    public String getPlaca() {
-        return placa;
-    }
-
-    /**
-     * @param placa the placa to set
-     */
-    public void setPlaca(String placa) {
-        this.placa = placa;
-    }
-
+   
     /**
      * @return the color
      */
@@ -118,6 +115,20 @@ public class Carro {
     @Override
     public String toString(){
         return this.marca+" "+this.modelo;
+    }
+
+    /**
+     * @return the precioPorDia
+     */
+    public int getPrecioPorDia() {
+        return precioPorDia;
+    }
+
+    /**
+     * @param precioPorDia the precioPorDia to set
+     */
+    public void setPrecioPorDia(int precioPorDia) {
+        this.precioPorDia = precioPorDia;
     }
     
 }
