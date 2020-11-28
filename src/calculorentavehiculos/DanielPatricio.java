@@ -5,7 +5,15 @@
  */
 package calculorentavehiculos;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -13,17 +21,82 @@ import java.util.List;
  */
 public class DanielPatricio extends javax.swing.JFrame {
 
-    
-    
-    
+   
+    private List<Carro> carros;
     /**
      * Creates new form DanielPatricio
      */
-    public DanielPatricio() {
+    public DanielPatricio() throws SQLException {
         initComponents();
-       
+        //limpiar();
+        recargarDropDownCarros();
+        recargarTextArea();
+        recargarDataTable();
+        
+        
     }
+    
+    public void limpiar(){
+        textAreaDescripcion.setText("");
+        txtNombre.setText("");
+        diasSpn.setValue(1);
+        
+    }
+    
+    private void recargarDataTable() throws SQLException{
+        List<Alquiler> alquileres = ManipulaDB.consultarObjeto(Alquiler.class);
+        List<String> columnNames = ManipulaDB.getColumnNames("Alquiler");
+        
+        DefaultTableModel model = new DefaultTableModel();
 
+        for(String name: columnNames){
+            model.addColumn(name);
+        }
+        
+        for(Alquiler alquiler: alquileres){
+             String [] array = {String.valueOf(alquiler.getIdAlquiler()),
+             alquiler.getFecha().toString(),
+             alquiler.getNombre(),
+             String.valueOf(alquiler.getDuracion()),
+             String.valueOf(alquiler.getIdCarro())
+             };
+            model.addRow(array);
+        }
+        
+        tablon.setModel(model);
+        
+        
+        
+        
+    }
+    
+
+    public void recargarTextArea(){
+        this.textAreaDescripcion.setText("");
+        StringBuilder sb = new StringBuilder();
+        Carro carroSeleccionado = (Carro) dropDownCarros.getSelectedItem();
+        sb.append("Marca: "+carroSeleccionado.getMarca()+"\n");
+        sb.append("Modelo: "+carroSeleccionado.getModelo()+"\n");
+        sb.append("Color: "+carroSeleccionado.getColor()+"\n");
+        sb.append("Precio por dia:" +carroSeleccionado.getPrecioPorDia());
+        this.textAreaDescripcion.append(sb.toString());
+    
+    
+    }
+    
+    public void recargarDropDownCarros() throws SQLException{
+        carros = ManipulaDB.consultarObjeto(Carro.class);
+     
+        
+       DefaultComboBoxModel<Carro> dropDownModel = new DefaultComboBoxModel<>();
+        
+        for(Carro carro: carros){
+            dropDownModel.addElement(carro);
+        }
+        
+        this.dropDownCarros.setModel(dropDownModel);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -34,36 +107,35 @@ public class DanielPatricio extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        dropDownCarros = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jSpinner1 = new javax.swing.JSpinner();
+        diasSpn = new javax.swing.JSpinner();
         jLabel5 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        alquilarBtn = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        textAreaDescripcion = new javax.swing.JTextArea();
         jLabel12 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
+        txtNombre = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtPlaca = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
+        txtMarca = new javax.swing.JTextField();
+        txtModelo = new javax.swing.JTextField();
+        txtColor = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
+        txtPrecioAPagar = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tablon = new javax.swing.JTable();
         jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -72,7 +144,13 @@ public class DanielPatricio extends javax.swing.JFrame {
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel1.setToolTipText("");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        dropDownCarros.setSelectedIndex(-1);
+        dropDownCarros.setSelectedItem("Seleccione uno");
+        dropDownCarros.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dropDownCarrosActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Seleccione un carro");
 
@@ -80,16 +158,27 @@ public class DanielPatricio extends javax.swing.JFrame {
 
         jLabel4.setText("Tiempo de Alquiler");
 
+        diasSpn.setValue(1);
+        diasSpn.setVerifyInputWhenFocusTarget(false);
+        diasSpn.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                diasSpnStateChanged(evt);
+            }
+        });
+
         jLabel5.setForeground(new java.awt.Color(255, 0, 0));
         jLabel5.setText("Maximo 7 dias");
 
-        jButton1.setText("Alquilar");
+        alquilarBtn.setText("Alquilar");
+        alquilarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                alquilarBtnActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Limpiar");
-
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jScrollPane2.setViewportView(jTextArea2);
+        textAreaDescripcion.setColumns(20);
+        textAreaDescripcion.setRows(5);
+        jScrollPane2.setViewportView(textAreaDescripcion);
 
         jLabel12.setText("Alquiler de carro");
 
@@ -99,12 +188,6 @@ public class DanielPatricio extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton2)
-                .addGap(55, 55, 55)
-                .addComponent(jButton1)
-                .addGap(67, 67, 67))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -114,12 +197,6 @@ public class DanielPatricio extends javax.swing.JFrame {
                         .addGap(35, 35, 35)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(30, 30, 30)
-                                .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel5))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel3)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -128,14 +205,23 @@ public class DanielPatricio extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addGap(30, 30, 30)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(alquilarBtn)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(diasSpn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel5)))))))
                 .addContainerGap(46, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(41, 41, 41)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(46, 46, 46))
+                .addComponent(dropDownCarros, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -144,12 +230,12 @@ public class DanielPatricio extends javax.swing.JFrame {
                 .addComponent(jLabel12)
                 .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dropDownCarros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addGap(36, 36, 36)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(36, 36, 36)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
@@ -157,14 +243,12 @@ public class DanielPatricio extends javax.swing.JFrame {
                         .addGap(25, 25, 25)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
-                            .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5))
-                        .addGap(59, 59, 59)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton1)
-                            .addComponent(jButton2)))
+                            .addComponent(diasSpn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)))
                     .addComponent(jLabel14))
-                .addContainerGap(138, Short.MAX_VALUE))
+                .addGap(60, 60, 60)
+                .addComponent(alquilarBtn)
+                .addContainerGap(137, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(207, 204, 204));
@@ -202,14 +286,14 @@ public class DanielPatricio extends javax.swing.JFrame {
                                     .addComponent(jLabel10))
                                 .addGap(47, 47, 47)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jTextField1)
-                                    .addComponent(jTextField2)
-                                    .addComponent(jTextField3)
-                                    .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)))
+                                    .addComponent(txtPlaca)
+                                    .addComponent(txtMarca)
+                                    .addComponent(txtModelo)
+                                    .addComponent(txtColor, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel11)
                                 .addGap(28, 28, 28)
-                                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(txtPrecioAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(252, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -220,23 +304,23 @@ public class DanielPatricio extends javax.swing.JFrame {
                 .addGap(30, 30, 30)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(37, 37, 37)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtMarca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(31, 31, 31)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(31, 31, 31)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtColor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(55, 55, 55)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPrecioAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(32, Short.MAX_VALUE))
         );
 
@@ -244,18 +328,15 @@ public class DanielPatricio extends javax.swing.JFrame {
 
         jLabel13.setText("Carros Alquilados");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tablon.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tablon);
 
         jButton3.setText("Eliminar");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -329,8 +410,66 @@ public class DanielPatricio extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        int selectedRows[] = tablon.getSelectedRows();
+        DefaultTableModel model =(DefaultTableModel) tablon.getModel();
+        
+        for(Integer row: selectedRows){
+            int id =Integer.parseInt((String)tablon.getValueAt(row,0));
+            model.removeRow(row);
+            try {
+                ManipulaDB.borrarObjeto(id, Alquiler.class);
+               
+            } catch (SQLException ex) {
+                Logger.getLogger(DanielPatricio.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
+         JOptionPane.showMessageDialog(rootPane, "Alquiler/(es) removido(s) con exito!");
+        
+        
+        
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void dropDownCarrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dropDownCarrosActionPerformed
+        recargarTextArea();
+    }//GEN-LAST:event_dropDownCarrosActionPerformed
+
+    private void alquilarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alquilarBtnActionPerformed
+        Carro carroSeleccionado = (Carro) dropDownCarros.getSelectedItem();
+        int total = ((int) diasSpn.getValue()*carroSeleccionado.getPrecioPorDia());
+        
+        txtPlaca.setText(String.valueOf(carroSeleccionado.getIdCarro()));
+        txtMarca.setText(carroSeleccionado.getMarca());
+        txtModelo.setText(carroSeleccionado.getModelo());
+        txtColor.setText(carroSeleccionado.getColor());
+        txtPrecioAPagar.setText(String.valueOf(total));
+        
+        Alquiler alquiler = new Alquiler(txtNombre.getText(),((int)diasSpn.getValue()),carroSeleccionado.getIdCarro());
+       
+        try {
+            ManipulaDB.guardarObjeto(alquiler);
+            JOptionPane.showMessageDialog(rootPane, "Alquiler guardado con exito!");
+            recargarDataTable();
+        } catch (SQLException ex) {
+            Logger.getLogger(DanielPatricio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+ 
+        
+        limpiar();
+        
+    }//GEN-LAST:event_alquilarBtnActionPerformed
+
+    
+    
+    private void diasSpnStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_diasSpnStateChanged
+       int valor = (int)diasSpn.getValue();
+        
+        if(valor>7){
+           diasSpn.setValue(7);
+       }else if(valor<1){
+           diasSpn.setValue(1);
+       }
+    }//GEN-LAST:event_diasSpnStateChanged
 
     /**
      * @param args the command line arguments
@@ -362,16 +501,20 @@ public class DanielPatricio extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new DanielPatricio().setVisible(true);
+                try {
+                    new DanielPatricio().setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(DanielPatricio.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton alquilarBtn;
+    private javax.swing.JSpinner diasSpn;
+    private javax.swing.JComboBox<Carro> dropDownCarros;
     private javax.swing.JButton jButton3;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -391,14 +534,13 @@ public class DanielPatricio extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JSpinner jSpinner1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
+    private javax.swing.JTable tablon;
+    private javax.swing.JTextArea textAreaDescripcion;
+    private javax.swing.JTextField txtColor;
+    private javax.swing.JTextField txtMarca;
+    private javax.swing.JTextField txtModelo;
+    private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextField txtPlaca;
+    private javax.swing.JTextField txtPrecioAPagar;
     // End of variables declaration//GEN-END:variables
 }

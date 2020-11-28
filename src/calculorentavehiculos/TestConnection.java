@@ -21,10 +21,8 @@ public class TestConnection {
     public static void main(String[] args){
         
         try {
-            List<Alquiler> alquileres = ManipulaDB.consultarObjeto(Alquiler.class);
-            for(Alquiler alquiler : alquileres){
-                System.out.println(alquiler.getIdAlquiler() +"   "+alquiler.getFecha());
-            }
+            List<Carro> alquileres = ManipulaDB.consultarObjeto(Carro.class);
+            
             
            
         } catch (SQLException ex) {

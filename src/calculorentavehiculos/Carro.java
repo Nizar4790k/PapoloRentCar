@@ -43,9 +43,16 @@ public class Carro implements Serializable {
     @Column(name="preciopordia")
     private int precioPorDia;
     
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name="idCarro")          //Carros pueden estar en varios alquileres
-    private Set<Alquiler> alquileres;
+    public Carro(String marca, String modelo){
+        this.color="";
+        this.idCarro=-1;
+        
+    }
+    
+    public Carro(){
+        
+    }
+    
     
     /*
     

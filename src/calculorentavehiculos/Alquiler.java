@@ -43,6 +43,20 @@ public class Alquiler implements Serializable {
     @Column(name="duracion")
     private int duracion;
     
+    @Column(name="idCarro")
+    private int idCarro;
+    
+    public Alquiler(){
+        
+    }
+    
+    public Alquiler(String nombre, int duracion, int idCarro){
+        this.nombre=nombre;
+        this.fecha = new Date();
+        this.idCarro=idCarro;
+        this.duracion=duracion;
+        
+    }
     
     /**
      * @return the idAlquiler
@@ -99,6 +113,9 @@ public class Alquiler implements Serializable {
     public void setDuracion(int duracion) {
         this.duracion = duracion;
     }
-    
 
+    public int getIdCarro(){
+        return this.idCarro;
+    }
+ 
 }
