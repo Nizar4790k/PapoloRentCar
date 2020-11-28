@@ -45,16 +45,18 @@ CREATE TABLE IF NOT EXISTS `Alquiler` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
+SELECT * FROM CARRO;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
-INSERT INTO `Carro` (`idCarro`,`marca`,`modelo`,`color`,`preciopordia`) VALUES (NULL,'Mazda','Demio','blanco',1500);
-INSERT INTO `Carro` (`idCarro`,`marca`,`modelo`,`color`,`preciopordia`) VALUES (NULL,'Hyundai ','Sonata','naranja',1000);
-INSERT INTO `Carro` (`idCarro`,`marca`,`modelo`,`color`,`preciopordia`) VALUES (NULL,'Hyundai','Santa Fe','negro',3000);
+INSERT INTO `Carro` (`idCarro`,`marca`,`modelo`,`color`,`preciopordia`) VALUES ('Mazda','Demio','blanco',1500);
+INSERT INTO `Carro` (`idCarro`,`marca`,`modelo`,`color`,`preciopordia`) VALUES ('Hyundai ','Sonata','naranja',1000);
+INSERT INTO `Carro` (`idCarro`,`marca`,`modelo`,`color`,`preciopordia`) VALUES ('Hyundai','Santa Fe','negro',3000);
 
 
-INSERT INTO `Alquiler` (`fecha`,`nombre`,`duracion`,`idCarro`) VALUES (NOW(),'Pablo Perez',NULL,1);
-INSERT INTO `Alquiler` (`fecha`,`nombre`,`duracion`,`idCarro`) VALUES (NOW(),'Benito Carmelo',NULL,2);
+INSERT INTO `Alquiler` (`fecha`,`nombre`,`duracion`,`idCarro`) VALUES (NOW(),'Pablo Perez',5,1);
+INSERT INTO `Alquiler` (`fecha`,`nombre`,`duracion`,`idCarro`) VALUES (NOW(),'Benito Carmelo',4,2);
+
+select * from Alquiler;
